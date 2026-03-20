@@ -1,12 +1,14 @@
 import os
 import telebot
-from google import genai
+import google.generativeai as genai
 
 # Configuração lendo do Render
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 GEMINI_KEY = os.getenv('GEMINI_API_KEY')
 
-client = genai.Client(api_key=GEMINI_KEY)
+# Conecta o Gemini (Jeito estável)
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
 bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
@@ -16,13 +18,10 @@ def send_welcome(message):
 @bot.message_handler(func=lambda m: True)
 def ai_response(message):
     try:
-        # Nova forma de chamar o Gemini
-        response = client.models.generate_content(
-            model="gemini-2.0-flash", contents=message.text
-        )
+        response = model.generate_content(message.text)
         bot.reply_to(message, response.text)
     except Exception as e:
         print(f"Erro: {e}")
-        bot.reply_to(message, "Ainda ajustando os motores... tente de novo em 10 segundos.")
+        bot.reply_to(message, "Estou processando os dados... tente de novo em alguns segundos!")
 
 bot.infinity_polling()
