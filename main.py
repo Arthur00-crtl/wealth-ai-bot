@@ -8,7 +8,7 @@ GEMINI_KEY = os.getenv('GEMINI_API_KEY')
 
 # Configura o Gemini sem usar o apelido "genai"
 generative_ai.configure(api_key=GEMINI_KEY)
-model = generative_ai.GenerativeModel('gemini-1.5-flash')
+model=generative_ai.GenerativeModel('gemini-pro')
 
 bot = telebot.TeleBot(TOKEN)
 
